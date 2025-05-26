@@ -9,6 +9,7 @@ public class playerController : MonoBehaviour
     public float runSpeed = 7;
     public float jumpForce = 300;
     public Rigidbody2D rb;
+    public GroundCheck groundCheck;
 
 
     // Start is called before the first frame update
@@ -35,7 +36,7 @@ public class playerController : MonoBehaviour
 
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && groundCheck.isGrounded)
         {
             //rb.AddForce(new Vector2(0,jumpForce));
             rb.AddForce(Vector2.up * jumpForce);
