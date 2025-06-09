@@ -4,22 +4,25 @@ using UnityEngine;
 
 public class Collectible : MonoBehaviour
 {
+   
+    public string itemName = "apple"; 
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //TODO check if collision is Player
-       if (!collision.gameObject.CompareTag("Player"))
-        {
-
+        
+        if (!collision.gameObject.CompareTag("Player"))
             return;
 
+       
+        Inventory playerInventory = collision.gameObject.GetComponent<Inventory>();
+
+       
+        if (playerInventory != null)
+        {
+            playerInventory.AddItem(itemName);
         }
-        //TODO send info to player
-        Inventory playerInventory = null;
-        playerInventory = collision.gameObject.GetComponent<Inventory>();
 
-        //player inventory
-        //TODO Delete collectible
+        
         Destroy(gameObject);
-
     }
 }

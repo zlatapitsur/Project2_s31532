@@ -11,6 +11,8 @@ public class playerController : MonoBehaviour
     public Rigidbody2D rb;
     public GroundCheck groundCheck;
     public PlayerHealth health;
+    public Animator anim;
+    public SpriteRenderer spriteRenderer;
 
 
     // Start is called before the first frame update
@@ -18,6 +20,8 @@ public class playerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         health = GetComponent<PlayerHealth>();
+        anim = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -26,10 +30,25 @@ public class playerController : MonoBehaviour
 
 
         if (health.isDead) return;
-        {
-            
-        }
+        
         float moveInput = Input.GetAxis("Horizontal");
+        if (moveInput >= 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+        else if (moveInput < 0)
+        {
+            spriteRenderer.flipX = true;
+        } 
+
+        if (moveInput != 0)
+        {
+            anim.SetBool("IsRun", true);
+        }
+        else
+        {
+            anim.SetBool("IsRun", false);
+        }
         //Debug.Log($"Input value: {moveInput}");
         //rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
         if (Input.GetKey(KeyCode.LeftShift))
