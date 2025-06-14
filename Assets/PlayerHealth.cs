@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
+using TMPro; 
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -8,23 +8,30 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private float health = 100;
     public Animator anim;
 
-    private void Start()
+    public bool isDead = false;
+
+    [Header("UI")]
+    public TextMeshProUGUI healthText; 
+
+    void Start()
     {
         anim = GetComponent<Animator>();
+        UpdateHealthUI();
     }
-    public bool isDead = false;
 
     public void TakeDamage(float damage)
     {
-        health = health - damage;
-        if(health < 0)
-        {
+        if (isDead) return;
+
+        health -= damage;
+
+        if (health < 0)
             health = 0;
-        }
+
         if (health > maxHealth)
-        {
             health = maxHealth;
-        }
+
+        UpdateHealthUI();
 
         if (health == 0)
         {
@@ -33,4 +40,11 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    private void UpdateHealthUI()
+    {
+        if (healthText != null)
+        {
+            healthText.text = "HP: " + Mathf.RoundToInt(health).ToString();
+        }
+    }
 }
