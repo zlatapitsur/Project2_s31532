@@ -24,44 +24,48 @@ public class playerController : MonoBehaviour
 
     void Update()
     {
-
         if (health.isDead) return;
 
         float moveInput = Input.GetAxis("Horizontal");
 
-        // Фліп персонажа
-        if (moveInput >= 0)
+        // Flip
+        if (moveInput > 0)
             spriteRenderer.flipX = false;
         else if (moveInput < 0)
             spriteRenderer.flipX = true;
 
-        // Біг або ходьба
-        if (Input.GetKey(KeyCode.LeftShift))
-            rb.velocity = new Vector2(moveInput * runSpeed, rb.velocity.y);
-        else
-            rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+        // Speed and movement
+        float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : moveSpeed;
+        rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
 
-        // Анімація бігу
-        if (moveInput != 0)
-            anim.SetBool("IsRun", true);
-        else
-            anim.SetBool("IsRun", false);
+        // Run animation
+        bool isRunning = moveInput != 0;
+        anim.SetBool("IsRun", isRunning);
 
-        // Стрибок
+        // Jump
         if (Input.GetKeyDown(KeyCode.Space) && groundCheck.isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce);
+
+            // Увага: Встановлюємо IsJump на 1 кадр
             anim.SetBool("IsJump", true);
+            anim.SetBool("IsFall", false);
+        }
+        else
+        {
+            // Якщо не натиснуто пробіл — скидаємо IsJump (щоб він не застряг)
+            anim.SetBool("IsJump", false);
         }
 
-        // Падіння або приземлення
+        // Fall
         if (rb.velocity.y < -0.1f && !groundCheck.isGrounded)
         {
             anim.SetBool("IsFall", true);
         }
-        else if (groundCheck.isGrounded)
+
+        // Grounded reset
+        if (groundCheck.isGrounded)
         {
-            anim.SetBool("IsJump", false);
             anim.SetBool("IsFall", false);
         }
     }

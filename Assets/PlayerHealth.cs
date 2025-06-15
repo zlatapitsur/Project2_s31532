@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-using TMPro; 
+using TMPro;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -11,7 +11,12 @@ public class PlayerHealth : MonoBehaviour
     public bool isDead = false;
 
     [Header("UI")]
-    public TextMeshProUGUI healthText; 
+    public TextMeshProUGUI healthText;
+
+    [Header("Damage Popup")]
+    public GameObject damagePopupPrefab;        // Префаб тексту урону
+    public Transform popupSpawnPoint;           // Точка появи
+    public Canvas canvas;                       // Canvas, до якого додається popup
 
     void Start()
     {
@@ -23,16 +28,23 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isDead) return;
 
+        // Віднімаємо HP
         health -= damage;
 
-        if (health < 0)
-            health = 0;
-
-        if (health > maxHealth)
-            health = maxHealth;
+        // Обмеження
+        if (health <= 0) health = 0;
+        if (health > maxHealth) health = maxHealth;
 
         UpdateHealthUI();
 
+        // Спливаючий текст урону
+        if (damagePopupPrefab != null && popupSpawnPoint != null && canvas != null)
+        {
+            GameObject popup = Instantiate(damagePopupPrefab, popupSpawnPoint.position, Quaternion.identity, canvas.transform);
+            popup.GetComponent<DamagePopup>().Setup((int)damage); // або Mathf.RoundToInt(damage)
+        }
+
+        // Смерть
         if (health == 0)
         {
             isDead = true;
